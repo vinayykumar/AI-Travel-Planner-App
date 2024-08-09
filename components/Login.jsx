@@ -9,28 +9,41 @@ export default function Login() {
         source={require('../assets/images/OnBoarding1.jpeg')}
         style={{
             width:'100%',
-            height:450
+            height:520
         }}
         ></Image>
 
         <View style={styles.container}> 
             <Text
                 style={{
-                    fontSize:28,
+                    fontSize:30,
                     fontFamily:'outfit-bold',
-                    textAlign:'center'
-                }}
-            >AI Travel Planner</Text>
-
-            <Text
-                style={{
-                    fontSize:16,
                     textAlign:'center',
                     marginTop:8
                 }}
+                >AI Travel Planner</Text>
+
+            <Text
+                style={{
+                    fontSize:20,
+                    fontFamily:'outfit',
+                    textAlign:'center',
+                    marginTop:16,
+                    color:Colors.Gray,
+                    lineHeight:28
+                }}
             >
-                Discover your next Adcenture effortlessly. Personalized iteneraries at your fingertips. Travel smarter with AI-driven insights.
+                Discover your next Adventure effortlessly. Personalized iteneraries at your fingertips. Travel smarter with AI-driven insights.
             </Text>
+
+            <View style={styles.button}>
+                <Text 
+                    style={{color:Colors.White,
+                            textAlign:'center',
+                            fontFamily:'outfit-bold',
+                            fontSize:18
+                    }}>Sign In with Google</Text>
+            </View>
         </View>
 
     </View>
@@ -45,5 +58,11 @@ const styles = StyleSheet.create({
         borderTopLeftRadius:30,
         borderTopRightRadius:30,
         padding:15
+    },
+    button:{
+        padding:15,
+        backgroundColor:Colors.Primary,
+        borderRadius:12,
+        marginTop:'25%'
     }
 })
