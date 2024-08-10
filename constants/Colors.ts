@@ -11,6 +11,7 @@ export const Colors = {
   Primary:'#000',
   Gray:'#7d7d7d',
   LightBorder:'#d9d9d9',
+  Blue:'#305eff',
   light: {
     text: '#11181C',
     background: '#fff',
