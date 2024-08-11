@@ -1,17 +1,44 @@
-import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useNavigation, useRouter } from 'expo-router'
 import {Colors} from '../../../constants/Colors'
 import Logo from '../../../assets/images/logoipsum.png'
+import Ionicons from '@expo/vector-icons/Ionicons'; 
+import { auth } from "../../../configs/FirebaseConfig.js";
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 
 export default function SingUp() {
   const navigation = useNavigation();
   const router = useRouter();
+
+  const [fullname,setFullname] = useState('');
+  const [email,setEmail] = useState('');
+  const [password,setPassword] = useState('');
+
   useEffect(()=>{
     navigation.setOptions({
       headerShown:false
     })
-  },)
+  },);
+
+  const OnCreateAccount = ()=> {
+    if(!(email?.length>0 || fullname?.length>0 || password?.length>0)){
+      ToastAndroid.show('Invalid Details',ToastAndroid.BOTTOM);
+      return;
+    }
+      createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed up 
+      const user = userCredential.user;
+      console.log(user);
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+  }
 
   return (
     <View style={{
@@ -20,19 +47,27 @@ export default function SingUp() {
       height:'100%'
     }}>
 
-      <Image 
-        source={require('../../../assets/images/logoipsum.png')}
-        style={{
-            width:'12%',
-            height:24,
-            marginTop:30
-        }}
-        ></Image>
+        <TouchableOpacity onPress={()=>{
+          router.back()
+        }}>
+            <Ionicons style={{marginTop:10}} name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        
+      <View>
+        <Image 
+          source={require('../../../assets/images/logoipsum.png')}
+          style={{
+              width:'12%',
+              height:24,
+              marginTop:24
+          }}
+          ></Image>
+      </View>
 
       <Text style={{
         fontFamily:'outfit-bold',
         fontSize:30,
-        marginTop:40
+        marginTop:24
       }}>Create an account</Text>
 
       <Text style={{
@@ -44,29 +79,54 @@ export default function SingUp() {
 
 
       <View style={{
-        marginTop:40
+        marginTop:32
       }}>
         
         <View>
           <Text style={{
             fontFamily:'outfit-bold',
             marginBottom:4
-          }}>Email</Text>
-          <TextInput style={styles.input}  placeholder='Enter your email'></TextInput>
+          }}>Full Name</Text>
+          <TextInput 
+              style={styles.input}  
+              placeholder='Enter Full Name'
+              onChangeText={(value)=>setFullname(value)}
+              ></TextInput>
         </View>
 
         <View style={{
-          marginTop:28
+          marginTop:24
+        }}>
+          <Text style={{
+            fontFamily:'outfit-bold',
+            marginBottom:4
+          }}>Email</Text>
+          <TextInput 
+              style={styles.input}  
+              placeholder='Enter your email'
+              onChangeText={(value)=>setEmail(value)}
+              ></TextInput>
+        </View>
+
+        <View style={{
+          marginTop:24
         }}>
           <Text style={{
             fontFamily:'outfit-bold',
             marginBottom:4
           }}>Password</Text>
-          <TextInput style={styles.input} secureTextEntry={true} placeholder='Enter password'></TextInput>
+          <TextInput 
+              style={styles.input} 
+              secureTextEntry={true} 
+              placeholder='Enter password'
+              onChangeText={(value)=>setPassword(value)}
+              ></TextInput>
         </View>
 
         <TouchableOpacity 
-                style={styles.button}>
+                style={styles.button}
+                onPress={()=>OnCreateAccount()}
+                >
                 <Text 
                     style={{color:Colors.White,
                             textAlign:'center',
@@ -77,15 +137,12 @@ export default function SingUp() {
             </TouchableOpacity>
       </View>
 
-      <View>
         <Text style={{
           color:Colors.LightBorder,
           fontSize:20,
-          marginTop:30,
+          marginTop:20,
           textAlign:'center'
           }}>-------------------------or-------------------------</Text>
-      </View>
-
 
           <Text style={{
             color:Colors.Gray,
@@ -105,8 +162,9 @@ export default function SingUp() {
                               textAlign:'center',
                               fontFamily:'outfit-medium',
                               fontSize:18,
-                      }}>Login</Text>
-              </TouchableOpacity>
+                      }}>Login
+                  </Text>
+          </TouchableOpacity>
 
     </View>
   )

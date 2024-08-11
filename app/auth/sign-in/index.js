@@ -1,17 +1,47 @@
-import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity, ToastAndroid } from 'react-native'
+import React, { useEffect, useState} from 'react'
 import { useNavigation, useRouter } from 'expo-router'
 import {Colors} from '../../../constants/Colors'
 import Logo from '../../../assets/images/logoipsum.png'
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { auth } from "../../../configs/FirebaseConfig.js";
+import { signInWithEmailAndPassword, getAuth } from 'firebase/auth'
 
 export default function SingIn() {
   const navigation = useNavigation();
   const router = useRouter();
+
+  const [email,setEmail] = useState('');
+  const [password,setPassword] = useState('');
+
   useEffect(()=>{
     navigation.setOptions({
       headerShown:false
     })
   },)
+
+  const OnSignIn = ()=>{
+    if(!email || !password){
+      ToastAndroid.show('Invalid Details',ToastAndroid.BOTTOM);
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(error)
+        if(errorCode=='auth/invalid-credential' || errorCode=='auth/invalid-email'){
+          ToastAndroid.show("Please enter correct Email and Password", ToastAndroid.SHORT)
+        }
+      }); 
+  }
 
   return (
     <View style={{
@@ -19,6 +49,13 @@ export default function SingIn() {
       backgroundColor:Colors.White,
       height:'100%'
     }}>
+
+    
+        <TouchableOpacity onPress={()=>{
+          router.back()
+        }}>
+            <Ionicons style={{marginTop:10}} name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
 
       <Image 
         source={require('../../../assets/images/logoipsum.png')}
@@ -51,20 +88,28 @@ export default function SingIn() {
             fontFamily:'outfit-bold',
             marginBottom:4
           }}>Email</Text>
-          <TextInput style={styles.input}  placeholder='Enter your email'></TextInput>
+          <TextInput 
+              onChangeText={(value)=>setEmail(value)}
+              style={styles.input}  
+              placeholder='Enter your email'></TextInput>
         </View>
 
         <View style={{
-          marginTop:28
+          marginTop:24
         }}>
           <Text style={{
             fontFamily:'outfit-bold',
             marginBottom:4
           }}>Password</Text>
-          <TextInput style={styles.input} secureTextEntry={true} placeholder='Enter password'></TextInput>
+          <TextInput 
+              onChangeText={(value)=>setPassword(value)}
+              style={styles.input} 
+              secureTextEntry={true} 
+              placeholder='Enter password'></TextInput>
         </View>
 
         <TouchableOpacity 
+                onPress={()=>OnSignIn()}
                 style={styles.button}>
                 <Text 
                     style={{color:Colors.White,
